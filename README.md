@@ -8,6 +8,8 @@ go install github.com/heppu/killer
 
 ## Usage
 Run killer and select process you want to kill by using filter and moving with arrow keys.
+
+
 ![](https://raw.githubusercontent.com/heppu/gkill/gif/screencast.gif)
 
 
