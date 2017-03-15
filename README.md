@@ -3,7 +3,7 @@ gkill - Easy process killer for macOS, Linux, and Windows
 ## Install
 
 ```
-go install github.com/heppu/killer
+go get github.com/heppu/killer
 ```
 
 ## Usage
