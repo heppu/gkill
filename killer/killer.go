@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"sort"
 	"strings"
 	"syscall"
 
@@ -12,6 +13,12 @@ import (
 	"github.com/k0kubun/go-ansi"
 	"github.com/mitchellh/go-ps"
 )
+
+type ByName []ps.Process
+
+func (p ByName) Len() int           { return len(p) }
+func (p ByName) Swap(i, j int)      { p[i], p[j] = p[j], p[i] }
+func (p ByName) Less(i, j int) bool { return p[i].Executable() < p[j].Executable() }
 
 type Killer struct {
 	rl        *readline.Instance
@@ -32,6 +39,7 @@ func NewKiller() (*Killer, error) {
 	if len(processes) == 0 {
 		return nil, fmt.Errorf("No processes")
 	}
+	sort.Sort(ByName(processes))
 
 	k := &Killer{
 		processes: processes,
