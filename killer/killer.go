@@ -137,11 +137,16 @@ func (k *Killer) OnChange(line []rune, pos int, key rune) (newLine []rune, newPo
 }
 
 func (k *Killer) printProcesses() {
-	for i := -3; i < 4; i++ {
+	end := 7
+	if len(k.filtered) < 7 {
+		end = len(k.filtered)
+	}
+	var i int
+	for i = 0; i < end; i++ {
 		ansi.Println()
 		ansi.EraseInLine(2)
 		index := ((k.cursor+i)%len(k.filtered) + len(k.filtered)) % len(k.filtered)
-		if i == 0 {
+		if i == end/2 {
 			color.Set(color.FgCyan)
 			ansi.Printf("❯ %s %d", k.filtered[index].Executable(), k.filtered[index].Pid())
 			color.Unset()
@@ -149,7 +154,10 @@ func (k *Killer) printProcesses() {
 			ansi.Printf("  %s %d", k.filtered[index].Executable(), k.filtered[index].Pid())
 		}
 	}
-	ansi.Println()
+	for ; i < 8; i++ {
+		ansi.Println()
+		ansi.EraseInLine(2)
+	}
 }
 
 func (k *Killer) filterProcesses() {
