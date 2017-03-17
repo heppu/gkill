@@ -120,15 +120,19 @@ func (k *Killer) OnChange(line []rune, pos int, key rune) (newLine []rune, newPo
 	}
 
 	bold := color.New(color.Bold).SprintFunc()
-	prompt := fmt.Sprintf("  %s", bold("Filter processes"))
-	postPrompt := fmt.Sprintf(" (%d/%d) : ", len(k.filtered), len(k.processes))
-	k.rl.SetPrompt(prompt + postPrompt)
+	prompt := "  Filter processes"
+	postPrompt := fmt.Sprintf(" (%d/%d)", len(k.filtered), len(k.processes))
+	if len(k.filtered) > 0 {
+		k.rl.SetPrompt(bold(prompt) + color.GreenString(postPrompt) + bold(": "))
+	} else {
+		k.rl.SetPrompt(bold(prompt) + color.RedString(postPrompt) + bold(": "))
+	}
 	k.rl.Refresh()
 
 	k.printProcesses()
 	if !k.done {
 		ansi.CursorPreviousLine(8)
-		ansi.CursorForward(18 + len(postPrompt) + len(line))
+		ansi.CursorForward(len(prompt) + len(postPrompt) + len(line) + 2)
 	}
 
 	return nil, 0, false
