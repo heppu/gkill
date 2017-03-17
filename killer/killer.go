@@ -125,12 +125,10 @@ func (k *Killer) OnChange(line []rune, pos int, key rune) (newLine []rune, newPo
 	k.rl.SetPrompt(prompt + postPrompt)
 	k.rl.Refresh()
 
-	if len(k.filtered) > 0 {
-		k.printProcesses()
-		if !k.done {
-			ansi.CursorPreviousLine(8)
-			ansi.CursorForward(18 + len(postPrompt) + len(line))
-		}
+	k.printProcesses()
+	if !k.done {
+		ansi.CursorPreviousLine(8)
+		ansi.CursorForward(18 + len(postPrompt) + len(line))
 	}
 
 	return nil, 0, false
@@ -153,6 +151,12 @@ func (k *Killer) printProcesses() {
 		} else {
 			ansi.Printf("  %s %d", k.filtered[index].Executable(), k.filtered[index].Pid())
 		}
+	}
+	if end == 0 {
+		ansi.Println()
+		ansi.EraseInLine(2)
+		ansi.Printf(color.RedString("  No results..."))
+		i++
 	}
 	for ; i < 8; i++ {
 		ansi.Println()
