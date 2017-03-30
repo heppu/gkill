@@ -140,6 +140,7 @@ func (k *Killer) OnChange(line []rune, pos int, key rune) (newLine []rune, newPo
 
 func (k *Killer) printProcesses() {
 	end := 7
+	faint := color.New(color.Faint).SprintFunc()
 	if len(k.filtered) < 7 {
 		end = len(k.filtered)
 	}
@@ -148,12 +149,18 @@ func (k *Killer) printProcesses() {
 		ansi.Println()
 		ansi.EraseInLine(2)
 		index := ((k.cursor+i-(end/2))%len(k.filtered) + len(k.filtered)) % len(k.filtered)
+		name := k.filtered[index].Executable()
+		pid := k.filtered[index].Pid()
 		if i == end/2 {
 			color.Set(color.FgCyan)
-			ansi.Printf("❯ %s %d", k.filtered[index].Executable(), k.filtered[index].Pid())
+			ansi.Printf("❯ %s", name)
+			ansi.CursorForward(17 - len(name))
+			ansi.Printf("%s", faint(pid))
 			color.Unset()
 		} else {
-			ansi.Printf("  %s %d", k.filtered[index].Executable(), k.filtered[index].Pid())
+			ansi.Printf("  %s", name)
+			ansi.CursorForward(17 - len(name))
+			ansi.Printf("%s", faint(pid))
 		}
 	}
 	if end == 0 {
