@@ -15,12 +15,6 @@ Run gkill and select process you want to kill by using filter and moving with ar
 
 - [fkill-cli](https://github.com/sindresorhus/fkill-cli) - Nodejs alternative
 
-
-## Created by
-
-- [Henri Koski](https://github.com/heppu)
-
-
 ## License
 
 MIT
