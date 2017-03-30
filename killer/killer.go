@@ -147,7 +147,7 @@ func (k *Killer) printProcesses() {
 	for i = 0; i < end; i++ {
 		ansi.Println()
 		ansi.EraseInLine(2)
-		index := ((k.cursor+i)%len(k.filtered) + len(k.filtered)) % len(k.filtered)
+		index := ((k.cursor+i-(end/2))%len(k.filtered) + len(k.filtered)) % len(k.filtered)
 		if i == end/2 {
 			color.Set(color.FgCyan)
 			ansi.Printf("❯ %s %d", k.filtered[index].Executable(), k.filtered[index].Pid())
