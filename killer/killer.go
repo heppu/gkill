@@ -7,6 +7,7 @@ import (
 	"sort"
 	"strings"
 	"syscall"
+	"time"
 
 	"github.com/fatih/color"
 	"github.com/heppu/rawterm"
@@ -81,8 +82,9 @@ func (k *Killer) Start() (err error) {
 			break
 		}
 	}
-
-	k.rt.Clean()
+	// TODO: Figure out why we need this sleep
+	// to make clean exit
+	time.Sleep(time.Millisecond * 10)
 	k.rt.Close()
 	err = k.err
 	return
@@ -152,6 +154,9 @@ func (k *Killer) printProcesses() {
 		pid := k.filtered[index].Pid()
 		if i == end/2 {
 			color.Set(color.FgCyan)
+			if k.killed {
+				color.Set(color.FgRed)
+			}
 			ansi.Printf("❯ %s", name)
 			ansi.CursorForward(17 - len(name))
 			ansi.Printf("%s", faint(pid))
@@ -203,6 +208,7 @@ func (k *Killer) filterInput(r rune) (rune, bool) {
 	case rawterm.CharEnter:
 		k.done = true
 		if len(k.filtered) > 0 {
+			k.killed = true
 			k.killProcess(syscall.SIGTERM)
 		}
 		return rawterm.CharInterrupt, true
