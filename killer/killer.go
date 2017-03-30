@@ -9,7 +9,7 @@ import (
 	"syscall"
 
 	"github.com/fatih/color"
-	"github.com/heppu/readline"
+	"github.com/heppu/rawterm"
 	"github.com/k0kubun/go-ansi"
 	"github.com/mitchellh/go-ps"
 )
@@ -21,7 +21,7 @@ func (p ByName) Swap(i, j int)      { p[i], p[j] = p[j], p[i] }
 func (p ByName) Less(i, j int) bool { return p[i].Executable() < p[j].Executable() }
 
 type Killer struct {
-	rl        *readline.Instance
+	rt        *rawterm.Instance
 	processes []ps.Process
 	filtered  []ps.Process
 	cursor    int
@@ -49,25 +49,24 @@ func NewKiller() (*Killer, error) {
 
 	color.Output = ansi.NewAnsiStdout()
 
-	rl, err := readline.New("")
+	rt, err := rawterm.New("")
 	if err != nil {
 		return nil, err
 	}
-	rl.SetConfig(&readline.Config{
-		HistoryLimit:        -1,
+	rt.SetConfig(&rawterm.Config{
 		FuncFilterInputRune: k.filterInput,
 		Listener:            k,
 		UniqueEditLine:      true,
 		Stdout:              color.Output,
 	})
-	k.rl = rl
+	k.rt = rt
 	return k, nil
 }
 
 func (k *Killer) Start() (err error) {
 	for {
-		if _, err = k.rl.Readline(); err != nil {
-			if err == readline.ErrInterrupt {
+		if _, err = k.rt.Readline(); err != nil {
+			if err == rawterm.ErrInterrupt {
 				err = nil
 				break
 			}
@@ -83,8 +82,8 @@ func (k *Killer) Start() (err error) {
 		}
 	}
 
-	k.rl.Clean()
-	k.rl.Close()
+	k.rt.Clean()
+	k.rt.Close()
 	err = k.err
 	return
 }
@@ -123,11 +122,11 @@ func (k *Killer) OnChange(line []rune, pos int, key rune) (newLine []rune, newPo
 	prompt := "  Filter processes"
 	postPrompt := fmt.Sprintf(" (%d/%d)", len(k.filtered), len(k.processes))
 	if len(k.filtered) > 0 {
-		k.rl.SetPrompt(bold(prompt) + color.GreenString(postPrompt) + bold(": "))
+		k.rt.SetPrompt(bold(prompt) + color.GreenString(postPrompt) + bold(": "))
 	} else {
-		k.rl.SetPrompt(bold(prompt) + color.RedString(postPrompt) + bold(": "))
+		k.rt.SetPrompt(bold(prompt) + color.RedString(postPrompt) + bold(": "))
 	}
-	k.rl.Refresh()
+	k.rt.Refresh()
 
 	k.printProcesses()
 	if !k.done {
@@ -201,24 +200,24 @@ func (k *Killer) filterProcesses() {
 
 func (k *Killer) filterInput(r rune) (rune, bool) {
 	switch r {
-	case readline.CharEnter:
+	case rawterm.CharEnter:
 		k.done = true
 		if len(k.filtered) > 0 {
 			k.killProcess(syscall.SIGTERM)
 		}
-		return readline.CharInterrupt, true
+		return rawterm.CharInterrupt, true
 
-	case readline.CharInterrupt:
+	case rawterm.CharInterrupt:
 		k.done = true
 		return r, true
 
-	case readline.CharNext:
+	case rawterm.CharNext:
 		k.nextProcess()
-		return readline.CharForward, true
+		return rawterm.CharForward, true
 
-	case readline.CharPrev:
+	case rawterm.CharPrev:
 		k.prevProcess()
-		return readline.CharForward, true
+		return rawterm.CharForward, true
 	}
 	return r, true
 }
