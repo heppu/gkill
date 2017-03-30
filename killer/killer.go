@@ -10,9 +10,9 @@ import (
 	"time"
 
 	"github.com/fatih/color"
+	"github.com/heppu/go-ps"
 	"github.com/heppu/rawterm"
 	"github.com/k0kubun/go-ansi"
-	"github.com/mitchellh/go-ps"
 )
 
 type ByName []ps.Process
@@ -157,7 +157,8 @@ func (k *Killer) printProcesses() {
 		ansi.EraseInLine(2)
 		index := ((k.cursor+i-(end/2))%len(k.filtered) + len(k.filtered)) % len(k.filtered)
 		name := k.filtered[index].Executable()
-		pid := k.filtered[index].Pid()
+		user := k.filtered[index].User()
+		pid := fmt.Sprintf("%d", k.filtered[index].Pid())
 		if i == end/2 {
 			color.Set(color.FgCyan)
 			if k.killed {
@@ -166,11 +167,15 @@ func (k *Killer) printProcesses() {
 			ansi.Printf("❯ %s", name)
 			ansi.CursorForward(17 - len(name))
 			ansi.Printf("%s", faint(pid))
+			ansi.CursorForward(8 - len(pid))
+			ansi.Printf("%s", faint(user))
 			color.Unset()
 		} else {
 			ansi.Printf("  %s", name)
 			ansi.CursorForward(17 - len(name))
 			ansi.Printf("%s", faint(pid))
+			ansi.CursorForward(8 - len(pid))
+			ansi.Printf("%s", faint(user))
 		}
 	}
 	if end == 0 {
