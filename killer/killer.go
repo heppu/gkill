@@ -67,21 +67,13 @@ func NewKiller() (*Killer, error) {
 func (k *Killer) Start() (err error) {
 	for {
 		if _, err = k.rt.Readline(); err != nil {
-			if err == rawterm.ErrInterrupt {
+			if err == rawterm.ErrInterrupt || err == io.EOF {
 				err = nil
 				break
 			}
-			if err == io.EOF {
-				err = nil
-				break
-			}
-		}
-		if k.done {
-			break
 		}
 	}
-	// TODO: Figure out why we need this sleep
-	// to make clean exit
+	// TODO: Figure out why we need this sleep to make clean exit
 	time.Sleep(time.Millisecond * 10)
 	k.rt.Close()
 	err = k.err
