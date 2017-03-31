@@ -73,8 +73,6 @@ func (k *Killer) Start() (err error) {
 			}
 			if err == io.EOF {
 				err = nil
-			}
-			if err == nil {
 				break
 			}
 		}
