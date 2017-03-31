@@ -158,19 +158,16 @@ func (k *Killer) printProcesses() {
 			if k.killed {
 				color.Set(color.FgRed)
 			}
-			ansi.Printf("❯ %s", name)
-			ansi.CursorForward(17 - len(name))
-			ansi.Printf("%s", faint(pid))
-			ansi.CursorForward(8 - len(pid))
-			ansi.Printf("%s", faint(user))
-			color.Unset()
+			ansi.Print("❯")
 		} else {
-			ansi.Printf("  %s", name)
-			ansi.CursorForward(17 - len(name))
-			ansi.Printf("%s", faint(pid))
-			ansi.CursorForward(8 - len(pid))
-			ansi.Printf("%s", faint(user))
+			ansi.Print(" ")
 		}
+		ansi.Printf(" %s", name)
+		ansi.CursorForward(17 - len(name))
+		ansi.Printf("%s", faint(pid))
+		ansi.CursorForward(8 - len(pid))
+		ansi.Printf("%s", faint(user))
+		color.Unset()
 	}
 	if end == 0 {
 		ansi.Println()
