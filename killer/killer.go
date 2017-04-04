@@ -32,7 +32,7 @@ type Killer struct {
 	err       error
 }
 
-func NewKiller() (*Killer, error) {
+func NewKiller(filter string) (*Killer, error) {
 	processes, err := ps.Processes()
 	if err != nil {
 		return nil, err
@@ -46,6 +46,7 @@ func NewKiller() (*Killer, error) {
 		processes: processes,
 		filtered:  processes,
 		cursor:    len(processes) / 2,
+		filter:    filter,
 	}
 
 	color.Output = ansi.NewAnsiStdout()
@@ -60,6 +61,7 @@ func NewKiller() (*Killer, error) {
 		UniqueEditLine:      true,
 		Stdout:              color.Output,
 	})
+	rt.Operation.SetBuf(filter)
 	k.rt = rt
 	return k, nil
 }
@@ -114,9 +116,12 @@ func (k *Killer) killProcess(sig syscall.Signal) {
 	k.err = p.Signal(sig)
 }
 
-func (k *Killer) OnChange(line []rune, pos int, key rune) (newLine []rune, newPos int, ok bool) {
+func (k *Killer) OnChange(line []rune, pos int, _ rune) (newLine []rune, newPos int, ok bool) {
 	if !k.done {
-		k.filter = string(line)
+		// When we call Readlien() OnChenge is triggered with nil line
+		if line != nil {
+			k.filter = string(line)
+		}
 		k.filterProcesses()
 	}
 
