@@ -127,7 +127,8 @@ func (k *Killer) OnChange(line []rune, pos int, _ rune) (newLine []rune, newPos 
 
 	bold := color.New(color.Bold).SprintFunc()
 	prompt := "  Filter processes"
-	postPrompt := fmt.Sprintf(" (%d/%d)", len(k.filtered), len(k.processes))
+	fmtlen := len(fmt.Sprintf("%d", len(k.processes)))
+	postPrompt := fmt.Sprintf(fmt.Sprintf(" (%%%dd/%%%dd)", fmtlen, fmtlen), len(k.filtered), len(k.processes))
 	if len(k.filtered) > 0 {
 		k.rt.SetPrompt(bold(prompt) + color.GreenString(postPrompt) + bold(": "))
 	} else {
