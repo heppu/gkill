@@ -2,6 +2,8 @@ gkill - Interactive process killer for Linux and macOS
 
 ![](https://raw.githubusercontent.com/heppu/gkill/gif/screencast.gif)
 
+![](https://travis-ci.org/heppu/gkill.svg?branch=master)
+
 ## Install
 
 ```
