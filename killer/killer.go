@@ -106,9 +106,10 @@ func (k *Killer) killProcess(sig syscall.Signal) {
 	k.err = p.Signal(sig)
 }
 
-func (k *Killer) OnChange(line []rune, pos int, _ rune) (newLine []rune, newPos int, ok bool) {
+func (k *Killer) OnChange(line []rune, _ int, _ rune) ([]rune, int, bool) {
 	if !k.done {
-		// When we call Readlien() OnChenge is triggered with nil line
+		// When we call Readline() OnChange is triggered with nil line
+		// This prevents reseting initial filter if one is given
 		if line != nil {
 			k.filter = string(line)
 		}
@@ -138,6 +139,8 @@ func (k *Killer) OnChange(line []rune, pos int, _ rune) (newLine []rune, newPos 
 func (k *Killer) printProcesses() {
 	end := 7
 	faint := color.New(color.Faint).SprintFunc()
+	cayn := color.New(color.FgCyan).SprintFunc()
+	red := color.New(color.FgRed).SprintFunc()
 	if len(k.filtered) < 7 {
 		end = len(k.filtered)
 	}
@@ -145,25 +148,20 @@ func (k *Killer) printProcesses() {
 	for i = 0; i < end; i++ {
 		ansi.Println()
 		ansi.EraseInLine(2)
-		index := ((k.cursor+i-(end/2))%len(k.filtered) + len(k.filtered)) % len(k.filtered)
-		name := k.filtered[index].Executable()
-		user := k.filtered[index].User()
-		pid := fmt.Sprintf("%d", k.filtered[index].Pid())
+
+		p := k.filtered[((k.cursor+i-(end/2))%len(k.filtered)+len(k.filtered))%len(k.filtered)]
+		name := padRight(p.Executable(), " ", 17)
+		pid := padRight(fmt.Sprintf("%d", p.Pid()), " ", 8)
+		user := p.User()
+		row := fmt.Sprintf("%s %s", name, faint(pid+user))
 		if i == end/2 {
-			color.Set(color.FgCyan)
 			if k.killed {
-				color.Set(color.FgRed)
+				ansi.Print(red("❯ " + row))
 			}
-			ansi.Print("❯")
+			ansi.Print(cayn("❯ " + row))
 		} else {
-			ansi.Print(" ")
+			ansi.Printf("  %s", row)
 		}
-		ansi.Printf(" %s", name)
-		ansi.CursorForward(17 - len(name))
-		ansi.Printf("%s", faint(pid))
-		ansi.CursorForward(8 - len(pid))
-		ansi.Printf("%s", faint(user))
-		color.Unset()
 	}
 	if end == 0 {
 		ansi.Println()
@@ -186,7 +184,9 @@ func (k *Killer) filterProcesses() {
 	k.filtered = make([]ps.Process, 0)
 
 	for i := 0; i < len(k.processes); i++ {
-		if index := strings.Index(strings.ToUpper(k.processes[i].Executable()), strings.ToUpper(k.filter)); index != -1 || k.filter == "" {
+		if strings.Index(strings.ToUpper(k.processes[i].Executable()), strings.ToUpper(k.filter)) != -1 ||
+			strings.Index(strings.ToUpper(k.processes[i].User()), strings.ToUpper(k.filter)) != -1 ||
+			k.filter == "" {
 			if !found && oldPid == k.processes[i].Pid() {
 				k.cursor = len(k.filtered)
 				found = true
@@ -224,4 +224,22 @@ func (k *Killer) filterInput(r rune) (rune, bool) {
 		return rawterm.CharForward, true
 	}
 	return r, true
+}
+
+func padRight(str, pad string, lenght int) string {
+	for {
+		str += pad
+		if len(str) > lenght {
+			return str[0:lenght]
+		}
+	}
+}
+
+func padLeft(str, pad string, lenght int) string {
+	for {
+		str = pad + str
+		if len(str) > lenght {
+			return str[0:lenght]
+		}
+	}
 }
