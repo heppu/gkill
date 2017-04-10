@@ -1,4 +1,6 @@
 language: go
+go: master
+
 deploy:
   provider: releases
   api_key:

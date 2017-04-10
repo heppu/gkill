@@ -4,6 +4,7 @@ package = github.com/heppu/gkill
 
 release:
 	mkdir -p release
+	go get -u
 	GOOS=darwin GOARCH=amd64 go build -o release/gkill-darwin-amd64 $(package)
 	GOOS=linux GOARCH=amd64 go build -o release/gkill-linux-amd64 $(package)
 	GOOS=linux GOARCH=386 go build -o release/gkill-linux-386 $(package)
