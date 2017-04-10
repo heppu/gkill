@@ -1,4 +1,4 @@
-gkill - Interactive process killer for macOS, Linux, and Windows
+gkill - Interactive process killer for Linux and macOS
 
 ![](https://raw.githubusercontent.com/heppu/gkill/gif/screencast.gif)
 
@@ -12,7 +12,6 @@ go get github.com/heppu/gkill
 Run gkill and select process you want to kill by using filter and moving with arrow keys.
 
 ## TODO
-- Fix windows bugs
 - Test [go-ps](https://github.com/heppu/go-ps) user parsing in all platforms
   - Merge  user feature
 
