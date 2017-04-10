@@ -1,0 +1,16 @@
+language: go
+deploy:
+  provider: releases
+  api_key:
+    secure: gLLyKgLEQH6q7ZP8U2PwO1zlrtF/oB+DDYmWTmiLcMEKdfjv95luJtD0Sxp8kfh97cr3EK4yj32Nd7D+3im903/UnrPdWQohE08HYgwzWskDqMq6aLTfWJwlxk4z0zRnsSiJ36CaiWi6GYgT2YiRQEEF7UCWgGoSRYnSiGOujeUQyLGJ68KJGbgooZKbbJOL7hnbI3IODT6RlR0F/EyFQC45l3NJyG7/Ulsu12ijXb+2jCi03Wdzs/+L/DMFEGjH6LSeNbT4lHH9SwcC3nEoZ0/sHB7JJfeFOQhn14STFB2ru0fh7D19ZDGbToa1Vtjfoc0QdDSui0x3GqoaJjkh93/UVBLzjfmSRQG9F5SFcIqjRBv9hE45MJfMKlsYJ0Ul3DQGjbfLHPpJ5YzesFtj0XZqtvmp8h+kaBfI9xlOSYnjYGUAGrhiKnSHlKide8Y32N+ZJ1jFG2izBhnVQgPypJeLBC/C5ToyqTz4BZq6sEx5HAngH/bl97RusrdEgzIyKLj+1Uf2jVyNd0jHJ+Sb/MP7R9Md2j/rlqrDzmZiqVV0LCZiw3QT3HGtTGDk+cXS0RIU2Mpwjvz/nhTEkC+OcJLOX7h1ioZ1+5ElwmU+Yka6LArZK43j0Hzoh0iIk/amSAC/H6LhpABJkpEQjc5WKFlqy0grEB51FMVbYJ6hRyw=
+  file:
+    - release/gkill-darwin-amd64
+    - release/gkill-linux-amd64
+    - release/gkill-linux-386
+    - release/gkill-linux-arm64
+    - release/gkill-linux-arm7
+    - release/gkill-linux-arm6
+    - release/gkill-linux-arm5
+  on:
+    repo: heppu/gkill
+    tags: true
