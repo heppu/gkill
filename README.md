@@ -13,10 +13,6 @@ go get github.com/heppu/gkill
 ## Usage
 Run gkill and select process you want to kill by using filter and moving with arrow keys.
 
-## TODO
-- Test [go-ps](https://github.com/heppu/go-ps) user parsing in all platforms
-  - Merge  user feature
-
 ## Related
 
 - [fkill-cli](https://github.com/sindresorhus/fkill-cli) - Nodejs alternative
